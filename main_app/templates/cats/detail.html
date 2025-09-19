@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ cat.name }} Details</title>
+</head>
+<body>
+    <h1>{{ cat.name }}</h1>
+    <p>Breed: {{ cat.breed }}</p>
+    <p>Age: {% if cat.age > 0 %}{{ cat.age }} years old{% else %}Kitten{% endif %}</p>
+    <p>Description: {{ cat.description }}</p>
+    <a href="{% url 'cat-index' %}">Back to Cat List</a>
+
+    <div class="cat-details">
+  <h1>{{ cat.name }}</h1>
+  {% if cat.age > 0 %}
+    <h2>A {{ cat.age }} year old {{ cat.breed }}</h2>
+  {% else %}
+    <h2>A {{ cat.breed }} kitten.</h2>
+  {% endif %}
+  <p>{{ cat.description }}</p>
+
+  <div class="cat-actions">
+    <a href="{% url 'cat-update' cat.id %}" class="btn warn">Edit</a>
+    <a href="{% url 'cat-delete' cat.id %}" class="btn danger">Delete</a>
+  </div>
+</div>
+
+</body>
+</html>
