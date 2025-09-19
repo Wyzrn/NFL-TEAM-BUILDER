@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ player.name }} Details</title>
+</head>
+<body>
+    <h1>{{ player.name }}</h1>
+    <p>Position: {{ player.position }}</p>
+    <p>Age: {% if player.age > 0 %}{{ player.age }} years old{% else %}Rookie{% endif %}</p>
+    <p>Description: {{ player.description }}</p>
+    <a href="{% url 'player-index' %}">Back to Player List</a>
+
+    <div class="player-details">
+      <h1>{{ player.name }}</h1>
+      {% if player.age > 0 %}
+        <h2>A {{ player.age }} year old {{ player.position }}</h2>
+      {% else %}
+        <h2>A rookie {{ player.position }}.</h2>
+      {% endif %}
+      <p>{{ player.description }}</p>
+
+      <div class="player-actions">
+        <a href="{% url 'player-update' player.id %}" class="btn warn">Edit</a>
+        <a href="{% url 'player-delete' player.id %}" class="btn danger">Delete</a>
+      </div>
+    </div>
+</body>
+</html>

@@ -6,8 +6,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" type="image/png" href="{% static 'images/splash.svg' %}"/>
-    <title>Cat Collector</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/football-player.svg' %}"/>
+    <title>NFL Player Collector</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     {% block head %} 
     {% endblock %}
@@ -16,13 +16,13 @@
     <header>
       <div class="header-logo-container">
         <a href="/">
-          <img src="{% static 'images/header-logo.svg' %}" alt="The Cat Collector Logo" />
+          <img src="{% static 'images/header-logo.svg' %}" alt="The NFL Player Collector Logo" />
         </a>
       </div>
       <nav>
         <ul>
-          <li><a href="{% url 'cat-index' %}">All Cats</a></li>
-          <li><a href="{% url 'cat-create' %}">Add a Cat</a></li>
+          <li><a href="{% url 'player-index' %}">All Players</a></li>
+          <li><a href="{% url 'player-create' %}">Add a Player</a></li>
           <li><a href="{% url 'about' %}">About</a></li>
         </ul>
       </nav>

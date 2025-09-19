@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% load static %} {% block head %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/players/player-index.css' %}"
+/>
+{% endblock %} {% block content %}
+
+<section class="page-header">
+  <h1>Player List</h1>
+  <img
+    src="{% static 'images/football-player.svg' %}"
+    alt="A football player"
+  />
+  <img
+    src="{% static 'images/helmet.svg' %}"
+    alt="A football helmet"
+  />
+  <img
+    src="{% static 'images/football.svg' %}"
+    alt="A football"
+  />
+  <img
+    src="{% static 'images/trophy.svg' %}"
+    alt="A trophy"
+  />
+</section>
+
+<section class="card-container">
+  {% for player in players %}
+    <div class="card">
+      <a href="{% url 'player-detail' player.id %}">
+        <div class="card-content">
+          <div class="card-img-container">
+            <img
+              src="{% static 'images/football-player.svg' %}"
+              alt="A football player"
+            />
+          </div>
+          <h2 class="card-title">{{ player.name }}</h2>
+          {% if player.age > 0 %}
+          <p>A {{ player.age }} year old {{ player.position }}</p>
+          {% else %}
+          <p>A rookie {{ player.position }}.</p>
+          {% endif %}
+          <p><small>{{ player.description }}</small></p>
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</section>
+
+{% endblock %}
