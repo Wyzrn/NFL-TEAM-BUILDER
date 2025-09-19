@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <div class="page-header">
+    <h1>Add a Team</h1>
+  </div>
+  <form method="post" class="form-container">
+    {% csrf_token %}
+    <div>
+      {{ form.name.label_tag }} {{ form.name }}
+    </div>
+
+    <h2>Roster</h2>
+    <table>
+      {% for slot, label, field in roster_fields %}
+        <tr>
+          <td>{{ label }}</td>
+          <td>
+            {% if field %}
+              {{ field.label_tag }} {{ field }}
+            {% else %}
+              <em>Field for {{ slot }} not available.</em>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <button type="submit">Create Team</button>
+  </form>
+{% endblock %}

@@ -20,16 +20,37 @@
         </a>
       </div>
       <nav>
-        <ul>
-          <li><a href="{% url 'player-index' %}">All Players</a></li>
-          <li><a href="{% url 'player-create' %}">Add a Player</a></li>
-          <li><a href="{% url 'about' %}">About</a></li>
-        </ul>
-      </nav>
+  <ul>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'team-index' %}">All Teams</a></li>
+      <li><a href="{% url 'team-create' %}">Add a Team</a></li>
+      <li><a href="{% url 'about' %}">About</a></li>
+      <li>
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" style="background:none;border:none;padding:0;color:blue;cursor:pointer;">
+            Logout
+          </button>
+        </form>
+      </li>
+    {% else %}
+      <li><a href="{% url 'about' %}">About</a></li>
+      <li><a href="{% url 'login' %}">Login</a></li>
+      <li><a href="{% url 'signup' %}">Sign Up</a></li>
+    {% endif %}
+  </ul>
+</nav>
     </header>
     <main>
      {% block content %} 
      {% endblock %}
      </main>
+     {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
   </body>
 </html>

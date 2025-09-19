@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>{{ team.name }}</h1>
+  <p>Owner: {{ team.owner.username }}</p>
+  <h2>Roster</h2>
+  <ul>
+    {% for spot in team.roster_spots.all %}
+      <li>
+        {{ spot.get_slot_display }}:
+        {% if spot.player %}
+          <img src="{{ spot.player.photo_url|default:'https://via.placeholder.com/40' }}" alt="{{ spot.player.name }}" width="40" style="vertical-align:middle;">
+          {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.nfl_team }})
+        {% else %}
+          <em>Empty</em>
+          <a href="{% url 'roster-assign' team.id spot.id %}">Add Player</a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'team-index' %}">Back to All Teams</a>
+{% endblock %}
