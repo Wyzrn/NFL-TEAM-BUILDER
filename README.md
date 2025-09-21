@@ -24,7 +24,7 @@ NFL Team Builder is a Django web application that allows football fans to create
 1. **Clone the repository:**
    ```bash
    git clone <repo-url>
-   cd cat-collector-lec
+   cd NFL-TEAM-BUILDER
    ```
 
 2. **Install dependencies:**
