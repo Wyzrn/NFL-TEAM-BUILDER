@@ -25,8 +25,22 @@
         <li class="roster-list-item">
           <span class="roster-slot-label">{{ spot.get_slot_display }}:</span>
           {% if spot.player %}
-            <img src="{{ spot.player.photo_url|default:'https://via.placeholder.com/40' }}" width="40">
-            <span class="roster-player-info">{{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})</span>
+            {% with spot.player.team|lower|slugify as team_slug %}
+              <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40">
+            {% endwith %}
+            <span class="roster-player-info">
+              {% if spot.player.position == "DEF" %}
+                {{ spot.player.name }}
+              {% else %}
+                {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})
+              {% endif %}
+            </span>
+            {% if user.is_authenticated and team.owner == user %}
+              <form method="post" action="{% url 'roster-assign' team.id spot.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" name="drop" value="1" class="btn danger" style="margin-left:1em;">Drop</button>
+              </form>
+            {% endif %}
           {% else %}
             <em>Empty</em>
             {% if user.is_authenticated and team.owner == user %}

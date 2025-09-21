@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load slugify %}
 {% block content %}
   <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
   <h1>Search NFL Players</h1>
@@ -27,7 +28,14 @@
   <ul>
     {% for player in players %}
       <li>
-        {{ player.name }} ({{ player.position }}, {{ player.nfl_team }})
+        {% with player.team|lower|slugify as team_slug %}
+          <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40">
+        {% endwith %}
+        {% if player.position == "DEF" %}
+          {{ player.name }}
+        {% else %}
+          {{ player.name }} ({{ player.position }}, {{ player.team }})
+        {% endif %}
       </li>
     {% empty %}
       <li>No players found.</li>

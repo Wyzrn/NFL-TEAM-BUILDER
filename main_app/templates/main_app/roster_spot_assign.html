@@ -9,7 +9,9 @@
     {% if spot.player %}
       <div>
         <strong>Current Player:</strong>
-        <img src="{{ spot.player.photo_url|default:'https://via.placeholder.com/40' }}" width="40">
+        {% with spot.player.team|lower|slugify as team_slug %}
+          <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40">
+        {% endwith %}
         {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})
         <form method="post" style="display:inline;">
           {% csrf_token %}
@@ -27,7 +29,9 @@
           <form method="post" style="display:inline;">
             {% csrf_token %}
             <input type="hidden" name="player_id" value="{{ player.id }}">
-            <img src="{{ player.photo_url|default:'https://via.placeholder.com/40' }}" width="40">
+            {% with player.team|lower|slugify as team_slug %}
+              <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40">
+            {% endwith %}
             {{ player.name }} ({{ player.position }}, {{ player.team }})
             <button type="submit">Add</button>
           </form>
