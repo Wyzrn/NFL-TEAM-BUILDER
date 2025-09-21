@@ -10,7 +10,7 @@
       <div>
         <strong>Current Player:</strong>
         {% with spot.player.team|lower|slugify as team_slug %}
-          <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40">
+          <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40" alt="{{ spot.player.team }} logo">
         {% endwith %}
         {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})
         <form method="post" style="display:inline;">
@@ -21,7 +21,7 @@
     {% endif %}
     <form method="get">
       <input type="text" name="q" value="{{ query }}" placeholder="Search NFL players by name, position, or team" />
-      <button type="submit">Search</button>
+      <button type="submit" class="btn">Search</button>
     </form>
     <ul>
       {% for player in players %}
@@ -30,10 +30,10 @@
             {% csrf_token %}
             <input type="hidden" name="player_id" value="{{ player.id }}">
             {% with player.team|lower|slugify as team_slug %}
-              <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40">
+              <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40" alt="{{ player.team }} logo">
             {% endwith %}
             {{ player.name }} ({{ player.position }}, {{ player.team }})
-            <button type="submit">Add</button>
+            <button type="submit" class="btn">Add</button>
           </form>
         </li>
       {% empty %}
@@ -42,6 +42,6 @@
         {% endif %}
       {% endfor %}
     </ul>
-    <a href="{% url 'team-detail' team.id %}">Back to Team</a>
+    <a href="{% url 'team-detail' team.id %}" class="btn secondary">Back to Team</a>
   </div>
 {% endblock %}

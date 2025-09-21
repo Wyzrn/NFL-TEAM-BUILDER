@@ -4,7 +4,7 @@
   <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Sign Up</button>
+    <button type="submit" class="btn">Sign Up</button>
   </form>
   <p style="color: red;">{{ error_message }}</p>
 {% endblock %}

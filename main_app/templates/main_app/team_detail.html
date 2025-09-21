@@ -26,7 +26,7 @@
           <span class="roster-slot-label">{{ spot.get_slot_display }}:</span>
           {% if spot.player %}
             {% with spot.player.team|lower|slugify as team_slug %}
-              <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40">
+              <img src="{% static 'images/' %}{{ team_slug }}-logo.png" width="40" alt="{{ spot.player.team }} logo">
             {% endwith %}
             <span class="roster-player-info">
               {% if spot.player.position == "DEF" %}

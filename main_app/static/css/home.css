@@ -9,8 +9,6 @@
   --borders: 1.5px solid var(--forest-green-light);
   --card-border-radius: 18px;
   --card-box-shadow: 0 8px 32px rgba(34, 139, 34, 0.18), 0 1.5px 4px rgba(20, 82, 20, 0.10);
-  --font-reg: 1.1rem;
-  --font-l: 1.25rem;
 }
 
 body {
@@ -21,46 +19,44 @@ body {
 }
 
 main {
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  height: 100%;
-}
-
-main > section {
-  width: 100%;
-  padding: 10px 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background: var(--white);
-  border-radius: var(--card-border-radius);
-  box-shadow: var(--shadow);
-  margin: 24px 0;
-  border: var(--borders);
-}
-
-.header-logo-container {
-  display: none;
 }
 
 .logo-container {
-  max-width: 375px;
-  filter: drop-shadow(0 4px 16px var(--forest-green-light));
-  border-radius: 16px;
-  background: linear-gradient(120deg, var(--forest-green) 60%, var(--forest-green-light) 100%);
-  box-shadow: var(--shadow);
-  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-box-shadow);
+  padding: 0;
+  margin: 2rem auto;
+  /* Remove max-width, let the logo set the size */
 }
 
-.cat-container {
-  width: 80%;
-  background: var(--accent);
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(34, 139, 34, 0.10);
-  border: 1px solid var(--forest-green-light);
+#main-logo {
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 4px 24px var(--forest-green-light));
+  border-radius: 16px;
+  width: auto;
+  height: auto;
+  max-width: 100vw;
+  max-height: 70vh;
+}
+
+@media (max-width: 600px) {
+  .logo-container {
+    padding: 0;
+    max-width: 98vw;
+  }
+  #main-logo {
+    max-width: 95vw;
+    max-height: 50vh;
+  }
 }
 
 .login {

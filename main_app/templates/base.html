@@ -16,30 +16,30 @@
     <header>
       <div class="header-logo-container">
         <a href="/">
-          <img src="{% static '' %}" alt="The NFL Player Collector Logo" />
+          <button class="btn header-home-btn" type="button">Home</button>
         </a>
       </div>
       <nav>
-  <ul>
-    {% if user.is_authenticated %}
-      <li><a href="{% url 'team-index' %}">All Teams</a></li>
-      <li><a href="{% url 'team_create' %}">Add a Team</a></li>
-      <li><a href="{% url 'about' %}">About</a></li>
-      <li>
-        <form action="{% url 'logout' %}" method="post" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" style="background:none;border:none;padding:0;color:blue;cursor:pointer;">
-            Logout
-          </button>
-        </form>
-      </li>
-    {% else %}
-      <li><a href="{% url 'about' %}">About</a></li>
-      <li><a href="{% url 'login' %}">Login</a></li>
-      <li><a href="{% url 'signup' %}">Sign Up</a></li>
-    {% endif %}
-  </ul>
-</nav>
+        <ul>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'team-index' %}">All Teams</a></li>
+            <li><a href="{% url 'team_create' %}">Add a Team</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li>
+              <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="background:none;border:none;padding:0;color:blue;cursor:pointer;">
+                  Logout
+                </button>
+              </form>
+            </li>
+          {% else %}
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+          {% endif %}
+        </ul>
+      </nav>
     </header>
     <main>
      {% block content %} 

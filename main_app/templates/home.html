@@ -1,18 +1,12 @@
-{% extends 'base.html' %} {% load static %} {% block head %}
+{% extends 'base.html' %} 
+{% load static %} 
+{% block head %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock %} {% block content %}
-
-<section class="logo-container">
-  <div class="player-container">
-    <img
-      src="{% static 'images/football-player.svg' %}"
-      alt="The NFL Player Collector Logo"
-    />
+{% endblock %} 
+{% block content %}
+<main>
+  <div class="logo-container">
+    <img src="{% static 'images/nflteammaker.png' %}" alt="NFL Team Maker Logo" id="main-logo" />
   </div>
-  <img
-    src="{% static '' %}"
-    alt="Text reads: NFL Player Collector"
-  />
-</section>
-
+</main>
 {% endblock %}
