@@ -1,43 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/roster_spot_assign.css' %}">
+{% endblock %}
 {% block content %}
-  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
-  <h1>Add Player to {{ spot.get_slot_display }} ({{ team.name }})</h1>
-  <form method="get">
-    <input type="text" name="q" value="{{ query }}" placeholder="Search NFL players by name, position, or team" />
-    <button type="submit">Search</button>
-  </form>
-  <ul>
-    {% for player in players %}
-      <li>
+  <div class="roster-container">
+    <h1>Add Player to {{ spot.get_slot_display }} ({{ team.name }})</h1>
+    {% if spot.player %}
+      <div>
+        <strong>Current Player:</strong>
+        <img src="{{ spot.player.photo_url|default:'https://via.placeholder.com/40' }}" width="40">
+        {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})
         <form method="post" style="display:inline;">
           {% csrf_token %}
-          <input type="hidden" name="player_id" value="{{ player.id }}">
-          <img src="{{ player.photo_url|default:'https://via.placeholder.com/40' }}" alt="{{ player.name }}" width="40" style="vertical-align:middle;">
-          {{ player.name }} ({{ player.position }}, {{ player.team }})
-          <button type="submit">Add</button>
+          <button type="submit" name="drop" value="1" class="btn danger">Drop</button>
         </form>
-      </li>
-    {% empty %}
-      {% if query %}
-        <li>No players found.</li>
-      {% endif %}
-    {% endfor %}
-  </ul>
-  <hr>
-  <h2>All Players</h2>
-  <ul>
-    {% for player in all_players %}
-      <li>
-        <form method="post" style="display:inline;">
-          {% csrf_token %}
-          <input type="hidden" name="player_id" value="{{ player.id }}">
-          <img src="{{ player.photo_url|default:'https://via.placeholder.com/40' }}" alt="{{ player.name }}" width="40" style="vertical-align:middle;">
-          {{ player.name }} ({{ player.position }}, {{ player.team }})
-          <button type="submit">Add</button>
-        </form>
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'team-detail' team.id %}">Back to Team</a>
+      </div>
+    {% endif %}
+    <form method="get">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search NFL players by name, position, or team" />
+      <button type="submit">Search</button>
+    </form>
+    <ul>
+      {% for player in players %}
+        <li>
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="player_id" value="{{ player.id }}">
+            <img src="{{ player.photo_url|default:'https://via.placeholder.com/40' }}" width="40">
+            {{ player.name }} ({{ player.position }}, {{ player.team }})
+            <button type="submit">Add</button>
+          </form>
+        </li>
+      {% empty %}
+        {% if query %}
+          <li>No players found.</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <a href="{% url 'team-detail' team.id %}">Back to Team</a>
+  </div>
 {% endblock %}

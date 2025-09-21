@@ -98,26 +98,67 @@ def roster_spot_assign(request, team_id, spot_id):
     team = get_object_or_404(Team, id=team_id, owner=request.user)
     spot = get_object_or_404(RosterSpot, id=spot_id, team=team)
     query = request.GET.get('q', '')
-    players = []
+
+    # Determine allowed positions for this spot
+    slot = spot.slot
+    if slot.startswith('RB'):
+        allowed_positions = ['RB']
+    elif slot.startswith('WR'):
+        allowed_positions = ['WR']
+    elif slot == 'QB':
+        allowed_positions = ['QB']
+    elif slot == 'TE':
+        allowed_positions = ['TE']
+    elif slot == 'K':
+        allowed_positions = ['K']
+    elif slot == 'DEF':
+        allowed_positions = ['DEF']
+    elif slot == 'FLEX':
+        allowed_positions = ['RB', 'WR', 'TE']
+    elif slot.startswith('BENCH'):
+        allowed_positions = ['QB', 'RB', 'WR', 'TE', 'K', 'DEF']
+    else:
+        allowed_positions = []
+
+    # Filter players by allowed positions
+    players = Player.objects.filter(position__in=allowed_positions)
     if query:
-        players = Player.objects.filter(
+        players = players.filter(
             Q(name__icontains=query) |
             Q(position__icontains=query) |
             Q(team__icontains=query)
         )
-    all_players = Player.objects.all()
+
     if request.method == 'POST':
+        if 'drop' in request.POST:
+            spot.player = None
+            spot.save()
+            return redirect('team-detail', pk=team.id)
         player_id = request.POST.get('player_id')
-        player = get_object_or_404(Player, id=player_id)
-        spot.player = player
-        spot.save()
-        return redirect('team-detail', pk=team.id)
+        if player_id:
+            player = get_object_or_404(Player, id=player_id)
+            if player.position in allowed_positions:
+                spot.player = player
+                spot.save()
+            return redirect('team-detail', pk=team.id)
+
+    # Always show roster spots in the correct order
+    ordered_spots = []
+    slot_order = [slot for slot, _ in ROSTER_SLOTS]
+    spots_dict = {s.slot: s for s in team.roster_spots.all()}
+    for slot in slot_order:
+        if slot == spot.slot:
+            ordered_spots.append(spot)
+        elif slot in spots_dict:
+            ordered_spots.append(spots_dict[slot])
+
     return render(request, 'main_app/roster_spot_assign.html', {
         'team': team,
         'spot': spot,
         'players': players,
         'query': query,
-        'all_players': all_players,
+        'allowed_positions': allowed_positions,
+        'ordered_spots': ordered_spots,
     })
 
 @login_required
@@ -178,15 +219,19 @@ def team_create(request):
         team_name = request.POST.get("team_name")
         if team_name:
             team = Team.objects.create(name=team_name, owner=request.user)
-            # Assign players to roster spots
+            # Assign players to roster spots (do NOT create extra spots, only update the ones created by default)
             for slot, _ in roster_slots:
                 player_id = request.POST.get(f"slot_{slot}")
+                # Find the existing RosterSpot for this team and slot
+                spot = RosterSpot.objects.filter(team=team, slot=slot).first()
+                if not spot:
+                    # If for some reason it doesn't exist, create it (shouldn't happen if you create all spots at team creation)
+                    spot = RosterSpot.objects.create(team=team, slot=slot)
                 if player_id:
                     player = Player.objects.get(id=player_id)
-                    RosterSpot.objects.create(team=team, slot=slot, player=player)
-                else:
-                    RosterSpot.objects.create(team=team, slot=slot)
-            # Redirect to the new team's detail page (this is what you want)
+                    spot.player = player
+                    spot.save()
+            # Redirect to the new team's detail page
             return redirect(team.get_absolute_url())
         else:
             messages.error(request, "Team name is required.")

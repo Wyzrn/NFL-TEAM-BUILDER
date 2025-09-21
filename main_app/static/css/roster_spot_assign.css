@@ -1,0 +1,132 @@
+:root {
+  --forest-green: #228B22;
+  --forest-green-dark: #145214;
+  --forest-green-light: #4caf50;
+  --accent: #f5f5f5;
+  --white: #fff;
+  --shadow: 0 4px 24px rgba(34, 139, 34, 0.18), 0 1.5px 4px rgba(20, 82, 20, 0.10);
+  --borders: 1.5px solid var(--forest-green-light);
+  --card-border-radius: 18px;
+  --card-box-shadow: 0 8px 32px rgba(34, 139, 34, 0.18), 0 1.5px 4px rgba(20, 82, 20, 0.10);
+  --font-main: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--forest-green-light) 100%);
+  color: var(--forest-green-dark);
+}
+
+.roster-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: var(--white);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-box-shadow);
+  padding: 2rem;
+  text-align: center;
+}
+
+.roster-container h1 {
+  color: var(--forest-green-dark);
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-main);
+  text-shadow: 0 2px 8px rgba(34, 139, 34, 0.10);
+}
+
+.roster-container form[method="get"] {
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
+  margin-bottom: 1.5em;
+}
+
+.roster-container input[type="text"] {
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  border: 1.5px solid var(--forest-green-light);
+  font-size: 1.1rem;
+  font-family: var(--font-main);
+  background: var(--accent);
+}
+
+.roster-container button {
+  background: linear-gradient(120deg, var(--forest-green) 60%, var(--forest-green-light) 100%);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5em 1.2em;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 0.5em;
+  box-shadow: 0 2px 8px rgba(34, 139, 34, 0.10);
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.roster-container button:hover {
+  background: linear-gradient(120deg, var(--forest-green-dark) 60%, var(--forest-green) 100%);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 18px rgba(34, 139, 34, 0.18);
+}
+
+.roster-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 1.5em 0;
+}
+
+.roster-container li {
+  background: var(--accent);
+  margin: 0.5em 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(34, 139, 34, 0.07);
+  padding: 0.8em 1em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.roster-container img {
+  border-radius: 50%;
+  margin-right: 1em;
+  box-shadow: 0 2px 8px rgba(34, 139, 34, 0.10);
+}
+
+.roster-container .btn.danger {
+  background: linear-gradient(120deg, #dc143c 60%, #ff4c4c 100%);
+}
+
+.roster-container .btn.danger:hover {
+  background: linear-gradient(120deg, #a10e2a 60%, #dc143c 100%);
+}
+
+.roster-container strong {
+  color: var(--forest-green);
+  font-size: 1.1rem;
+}
+
+.roster-container hr {
+  margin: 2em 0;
+  border: none;
+  border-top: 1.5px solid var(--forest-green-light);
+}
+
+.roster-container a {
+  color: var(--forest-green-dark);
+  text-decoration: underline;
+  font-size: 1.1rem;
+  margin-top: 1em;
+  display: inline-block;
+}
+
+@media (max-width: 700px) {
+  .roster-container {
+    padding: 1rem 0.5rem;
+    max-width: 98vw;
+  }
+  .roster-container h1 {
+    font-size: 1.4rem;
+  }
+}

@@ -1,37 +1,41 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/team_detail.css' %}">
+{% endblock %}
 {% block content %}
-  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
-  {% if user.is_authenticated and team.owner == user %}
-    <form method="post" style="margin-bottom: 1em;">
-      {% csrf_token %}
-      <label>
-        Team Name:
-        <input type="text" name="team_name" value="{{ team.name }}" required>
-      </label>
-      <button type="submit">Save</button>
-    </form>
-    <a href="{% url 'team-delete' team.id %}">Delete</a>
-  {% else %}
-    <h1>{{ team.name }}</h1>
-    <p>Owner: {{ team.owner.username }}</p>
-  {% endif %}
-  <h2>Roster</h2>
-  <ul>
-    {% for spot in team.roster_spots.all %}
-      <li>
-        {{ spot.get_slot_display }}:
-        {% if spot.player %}
-          <img src="{{ spot.player.photo_url|default:'https://via.placeholder.com/40' }}" alt="{{ spot.player.name }}" width="40" style="vertical-align:middle;">
-          {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})
-        {% else %}
-          <em>Empty</em>
-          {% if user.is_authenticated and team.owner == user %}
-            <a href="{% url 'roster-assign' team.id spot.id %}">Add Player</a>
+  <div class="team-detail-container">
+    {% if user.is_authenticated and team.owner == user %}
+      <form method="post" class="team-name-form">
+        {% csrf_token %}
+        <label>
+          Team Name:
+          <input type="text" name="team_name" value="{{ team.name }}" required>
+        </label>
+        <button type="submit" class="btn">Save</button>
+      </form>
+      <a href="{% url 'team-delete' team.id %}" class="btn danger">Delete</a>
+    {% else %}
+      <h1 class="team-title">{{ team.name }}</h1>
+      <p class="team-owner">Owner: {{ team.owner.username }}</p>
+    {% endif %}
+    <h2 class="roster-title">Roster</h2>
+    <ul class="roster-list">
+      {% for spot in team.roster_spots.all|dictsort:"slot" %}
+        <li class="roster-list-item">
+          <span class="roster-slot-label">{{ spot.get_slot_display }}:</span>
+          {% if spot.player %}
+            <img src="{{ spot.player.photo_url|default:'https://via.placeholder.com/40' }}" width="40">
+            <span class="roster-player-info">{{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})</span>
+          {% else %}
+            <em>Empty</em>
+            {% if user.is_authenticated and team.owner == user %}
+              <a href="{% url 'roster-assign' team.id spot.id %}" class="btn">Add Player</a>
+            {% endif %}
           {% endif %}
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'team-index' %}">Back to All Teams</a>
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="{% url 'team-index' %}" class="btn secondary">Back to All Teams</a>
+  </div>
 {% endblock %}

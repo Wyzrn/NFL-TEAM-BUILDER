@@ -6,7 +6,7 @@
   <p>Position: {{ player.position }}</p>
   <p>Team: {{ player.team }}</p>
   {% if player.photo_url %}
-    <img src="{{ player.photo_url }}" alt="{{ player.name }}">
+    <img src="{{ player.photo_url }}">
   {% endif %}
   <!-- Add more player fields as needed -->
   <a href="{% url 'team_create' %}">Back to Team Creation</a>
