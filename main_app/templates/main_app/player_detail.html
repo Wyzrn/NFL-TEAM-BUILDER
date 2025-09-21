@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>{{ player.name }}</h1>
+  <p>Position: {{ player.position }}</p>
+  <p>Team: {{ player.nfl_team }}</p>
+  {% if player.photo_url %}
+    <img src="{{ player.photo_url }}" alt="{{ player.name }}">
+  {% endif %}
+  <!-- Add more player fields as needed -->
+  <a href="{% url 'team-create' %}">Back to Team Creation</a>
+{% endblock %}

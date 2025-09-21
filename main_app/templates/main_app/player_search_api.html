@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Search NFL Players</h1>
+  <form method="get">
+    <input type="text" name="q" value="{{ query }}" id="player-search" placeholder="Search by name">
+    <select name="position">
+      <option value="">All Positions</option>
+      {% for pos in positions %}
+        <option value="{{ pos }}" {% if pos == selected_position %}selected{% endif %}>{{ pos }}</option>
+      {% endfor %}
+    </select>
+    <select name="team">
+      <option value="">All Teams</option>
+      {% for t in teams %}
+        <option value="{{ t }}" {% if t == selected_team %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+    <select name="sort">
+      <option value="name" {% if sort == 'name' %}selected{% endif %}>Sort by Name</option>
+      <option value="position" {% if sort == 'position' %}selected{% endif %}>Sort by Position</option>
+      <option value="team" {% if sort == 'team' %}selected{% endif %}>Sort by Team</option>
+    </select>
+    <button type="submit">Search</button>
+  </form>
+  <ul>
+    {% for player in players %}
+      <li>
+        {{ player.name }} ({{ player.position }}, {{ player.team }})
+      </li>
+    {% empty %}
+      <li>No players found.</li>
+    {% endfor %}
+  </ul>
+  <script>
+    // Simple autocomplete (AJAX) for the search box
+    document.getElementById('player-search').addEventListener('input', function() {
+      // You can implement AJAX here for true autocomplete if desired
+      // For now, the form will submit on Enter or button click
+    });
+  </script>
+{% endblock %}

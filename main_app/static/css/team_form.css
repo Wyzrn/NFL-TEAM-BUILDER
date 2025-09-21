@@ -1,0 +1,91 @@
+.team-create-container {
+  display: flex;
+  gap: 2em;
+  margin-top: 2em;
+}
+
+.team-roster {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.team-player-list {
+  flex: 2;
+  background: #fff;
+  border-radius: 8px;
+  padding: 1em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+.roster-slot {
+  margin-bottom: 1em;
+  padding: 0.5em 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4em 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.player-row span {
+  font-weight: 500;
+}
+
+.player-row button {
+  margin-left: 1em;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.3em 0.8em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.player-row button:hover {
+  background: #0056b3;
+}
+
+.player-row a {
+  margin-left: 0.5em;
+  color: #555;
+  text-decoration: underline;
+  font-size: 0.95em;
+}
+
+#player-search-form {
+  margin-bottom: 1em;
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+#player-search-form input,
+#player-search-form select {
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#player-search-form button {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.3em 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#player-search-form button:hover {
+  background: #1e7e34;
+}

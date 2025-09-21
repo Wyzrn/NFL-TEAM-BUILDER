@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/png" href="{% static 'images/football-player.svg' %}"/>
-    <title>NFL Player Collector</title>
+    <title>NFL Team Maker</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     {% block head %} 
     {% endblock %}
@@ -16,14 +16,14 @@
     <header>
       <div class="header-logo-container">
         <a href="/">
-          <img src="{% static 'images/header-logo.svg' %}" alt="The NFL Player Collector Logo" />
+          <img src="{% static '' %}" alt="The NFL Player Collector Logo" />
         </a>
       </div>
       <nav>
   <ul>
     {% if user.is_authenticated %}
       <li><a href="{% url 'team-index' %}">All Teams</a></li>
-      <li><a href="{% url 'team-create' %}">Add a Team</a></li>
+      <li><a href="{% url 'team_create' %}">Add a Team</a></li>
       <li><a href="{% url 'about' %}">About</a></li>
       <li>
         <form action="{% url 'logout' %}" method="post" style="display:inline;">
@@ -45,6 +45,10 @@
      {% block content %} 
      {% endblock %}
      </main>
+     <form method="get" action="{% url 'player_search' %}" class="search-form" role="search">
+  <input type="search" name="q" placeholder="Search players, teams, positions" value="{{ request.GET.q|default:'' }}" aria-label="Search players">
+  <button type="submit">Search</button>
+</form>
      {% if messages %}
     <ul class="messages">
       {% for message in messages %}

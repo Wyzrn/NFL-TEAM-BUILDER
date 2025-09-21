@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Search results{% if q %} for "{{ q }}"{% endif %}</h1>
+
+  {% if players %}
+    <ul>
+      {% for p in players %}
+        <li>
+          {{ p.name }} — {{ p.team|default:p.nfl_team }} ({{ p.position }})
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No players found.</p>
+  {% endif %}
+{% endblock %}

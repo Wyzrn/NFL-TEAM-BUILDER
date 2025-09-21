@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/players/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -81,7 +82,11 @@ WSGI_APPLICATION = 'catcollector.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'catcollector',
+        'NAME': 'ufourproject',
+        'USER': 'newadmin',
+        'PASSWORD': 'yourpassword',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -125,6 +130,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

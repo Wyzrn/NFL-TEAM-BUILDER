@@ -1,0 +1,342 @@
+from django.core.management.base import BaseCommand
+from django.db.models import Q
+from main_app.models import Player
+
+class Command(BaseCommand):
+    help = "Load players (QBs, RBs, WRs) with nfl_team field mapped"
+
+    def handle(self, *args, **kwargs):
+        q = ""
+        players = [
+            {"name": "Josh Allen", "team": "Buffalo Bills", "position": "QB"},
+            {"name": "Tua Tagovailoa", "team": "Miami Dolphins", "position": "QB"},
+            {"name": "Drake Maye", "team": "New England Patriots", "position": "QB"},
+            {"name": "Justin Fields", "team": "New York Jets", "position": "QB"},
+            {"name": "Joe Burrow", "team": "Cincinnati Bengals", "position": "QB"},
+            {"name": "Joe Flacco", "team": "Cleveland Browns", "position": "QB"},
+            {"name": "Aaron Rodgers", "team": "Pittsburgh Steelers", "position": "QB"},
+            {"name": "Lamar Jackson", "team": "Baltimore Ravens", "position": "QB"},
+            {"name": "C.J. Stroud", "team": "Houston Texans", "position": "QB"},
+            {"name": "Daniel Jones", "team": "Indianapolis Colts", "position": "QB"},
+            {"name": "Trevor Lawrence", "team": "Jacksonville Jaguars", "position": "QB"},
+            {"name": "Cam Ward", "team": "Tennessee Titans", "position": "QB"},
+            {"name": "Patrick Mahomes", "team": "Kansas City Chiefs", "position": "QB"},
+            {"name": "Justin Herbert", "team": "Los Angeles Chargers", "position": "QB"},
+            {"name": "Bo Nix", "team": "Denver Broncos", "position": "QB"},
+            {"name": "Geno Smith", "team": "Las Vegas Raiders", "position": "QB"},
+            {"name": "Dak Prescott", "team": "Dallas Cowboys", "position": "QB"},
+            {"name": "Russell Wilson", "team": "New York Giants", "position": "QB"},
+            {"name": "Jalen Hurts", "team": "Philadelphia Eagles", "position": "QB"},
+            {"name": "Jayden Daniels", "team": "Washington Commanders", "position": "QB"},
+            {"name": "Jared Goff", "team": "Detroit Lions", "position": "QB"},
+            {"name": "Jordan Love", "team": "Green Bay Packers", "position": "QB"},
+            {"name": "Michael Penix Jr.", "team": "Atlanta Falcons", "position": "QB"},
+            {"name": "Bryce Young", "team": "Carolina Panthers", "position": "QB"},
+            {"name": "Spencer Rattler", "team": "New Orleans Saints", "position": "QB"},
+            {"name": "Baker Mayfield", "team": "Tampa Bay Buccaneers", "position": "QB"},
+            {"name": "Kyler Murray", "team": "Arizona Cardinals", "position": "QB"},
+            {"name": "Brock Purdy", "team": "San Francisco 49ers", "position": "QB"},
+            {"name": "Sam Darnold", "team": "Seattle Seahawks", "position": "QB"},
+            {"name": "Matthew Stafford", "team": "Los Angeles Rams", "position": "QB"},
+            {"name": "J.J. McCarthy", "team": "Minnesota Vikings", "position": "QB"},
+            {"name": "Caleb Williams", "team": "Chicago Bears", "position": "QB"},
+        ]
+
+        filtered_players = Player.objects.filter(name__icontains="Josh")
+
+        # This is the correct way to filter a Python list:
+        players = [
+            p for p in players
+            if q.lower() in p["name"].lower()
+            or q.lower() in p["team"].lower()
+            or q.lower() in p["position"].lower()
+        ]
+
+        # add QBs (do not modify these)
+        Player.objects.bulk_create([Player(**p) for p in players], ignore_conflicts=True)
+
+        # --- NEW: running backs for all 32 teams ---
+        running_backs = [
+            {"name": "James Cook", "team": "Buffalo Bills", "position": "RB"},
+            {"name": "Devon Achane", "team": "Miami Dolphins", "position": "RB"},
+            {"name": "Rhamondre Stevenson", "team": "New England Patriots", "position": "RB"},
+            {"name": "Breece Hall", "team": "New York Jets", "position": "RB"},
+            {"name": "Chase", "team": "Cincinnati Bengals", "position": "RB"},
+            {"name": "Jerome Ford", "team": "Cleveland Browns", "position": "RB"},
+            {"name": "Jaylen Warren", "team": "Pittsburgh Steelers", "position": "RB"},
+            {"name": "Derrick Henry", "team": "Baltimore Ravens", "position": "RB"},
+            {"name": "Joe Mixon", "team": "Houston Texans", "position": "RB"},
+            {"name": "Jonathan Taylor", "team": "Indianapolis Colts", "position": "RB"},
+            {"name": "Travis Etienne", "team": "Jacksonville Jaguars", "position": "RB"},
+            {"name": "Tony Pollard", "team": "Tennessee Titans", "position": "RB"},
+            {"name": "Isiah Pacheco", "team": "Kansas City Chiefs", "position": "RB"},
+            {"name": "Omarion Hampton", "team": "Los Angeles Chargers", "position": "RB"},
+            {"name": "J.K. Dobbins", "team": "Denver Broncos", "position": "RB"},
+            {"name": "Ashton Jeanty", "team": "Las Vegas Raiders", "position": "RB"},
+            {"name": "Javonte Williams", "team": "Dallas Cowboys", "position": "RB"},
+            {"name": "Tyrone Tracy Jr.", "team": "New York Giants", "position": "RB"},
+            {"name": "Saquon Barkley", "team": "Philadelphia Eagles", "position": "RB"},
+            {"name": "Jacory Croskey-Merritt", "team": "Washington Commanders", "position": "RB"},
+            {"name": "Jahmyr Gibbs", "team": "Detroit Lions", "position": "RB"},
+            {"name": "Josh Jacobs", "team": "Green Bay Packers", "position": "RB"},
+            {"name": "Bijan Robinson", "team": "Atlanta Falcons", "position": "RB"},
+            {"name": "Chubba Hubbard", "team": "Carolina Panthers", "position": "RB"},
+            {"name": "Alvin Kamara", "team": "New Orleans Saints", "position": "RB"},
+            {"name": "Bucky Irving", "team": "Tampa Bay Buccaneers", "position": "RB"},
+            {"name": "James Conner", "team": "Arizona Cardinals", "position": "RB"},
+            {"name": "Christian McCaffrey", "team": "San Francisco 49ers", "position": "RB"},
+            {"name": "Kenneth Walker III", "team": "Seattle Seahawks", "position": "RB"},
+            {"name": "Kyren Williams", "team": "Los Angeles Rams", "position": "RB"},
+            {"name": "Aaron Jones", "team": "Minnesota Vikings", "position": "RB"},
+            {"name": "D'Andre Swift", "team": "Chicago Bears", "position": "RB"},
+        ]
+
+        # validate unique teams for RBs
+        teams = [r["team"] for r in running_backs]
+        dup_teams = set([t for t in teams if teams.count(t) > 1])
+        if dup_teams:
+            self.stdout.write(self.style.ERROR(f"Duplicate teams in running_backs list: {', '.join(sorted(dup_teams))}"))
+            return
+
+        if len(running_backs) != 32:
+            self.stdout.write(self.style.ERROR(f"Running backs list length is {len(running_backs)}; expected 32"))
+            return
+
+        Player.objects.bulk_create([Player(**r) for r in running_backs], ignore_conflicts=True)
+        self.stdout.write(self.style.SUCCESS("Loaded QBs and RBs (RBs: 32 teams)."))
+
+        # --- NEW: wide receivers for all 32 teams ---
+        wide_receivers = [
+            {"name": "Khalil Shakir", "team": "Buffalo Bills", "position": "WR"},
+            {"name": "Keon Coleman", "team": "Buffalo Bills", "position": "WR"},
+            {"name": "Tyreek Hill", "team": "Miami Dolphins", "position": "WR"},
+            {"name": "Jaylen Waddle", "team": "Miami Dolphins", "position": "WR"},
+            {"name": "Stefon Diggs", "team": "New England Patriots", "position": "WR"},
+            {"name": "DeMario Douglas", "team": "New England Patriots", "position": "WR"},
+            {"name": "Garrett Wilson", "team": "New York Jets", "position": "WR"},
+            {"name": "Josh Reynolds", "team": "New York Jets", "position": "WR"},
+            {"name": "Ja'Marr Chase", "team": "Cincinnati Bengals", "position": "WR"},
+            {"name": "Tee Higgins", "team": "Cincinnati Bengals", "position": "WR"},
+            {"name": "Jerry Jeudy", "team": "Cleveland Browns", "position": "WR"},
+            {"name": "Cedric Tillman", "team": "Cleveland Browns", "position": "WR"},
+            {"name": "DK Metcalf", "team": "Pittsburgh Steelers", "position": "WR"},
+            {"name": "Calvin Austin III", "team": "Pittsburgh Steelers", "position": "WR"},
+            {"name": "Zay Flowers", "team": "Baltimore Ravens", "position": "WR"},
+            {"name": "Rashod Bateman", "team": "Baltimore Ravens", "position": "WR"},
+            {"name": "Nico Collins", "team": "Houston Texans", "position": "WR"},
+            {"name": "Jayden Higgins", "team": "Houston Texans", "position": "WR"},
+            {"name": "Michael Pittman Jr.", "team": "Indianapolis Colts", "position": "WR"},
+            {"name": "Josh Downs", "team": "Indianapolis Colts", "position": "WR"},
+            {"name": "Brian Thomas Jr.", "team": "Jacksonville Jaguars", "position": "WR"},
+            {"name": "Travis Hunter", "team": "Jacksonville Jaguars", "position": "WR"},
+            {"name": "Calvin Ridley", "team": "Tennessee Titans", "position": "WR"},
+            {"name": "Elic Ayomanor", "team": "Tennessee Titans", "position": "WR"},
+            {"name": "Xavier Worthy", "team": "Kansas City Chiefs", "position": "WR"},
+            {"name": "Rashee Rice", "team": "Kansas City Chiefs", "position": "WR"},
+            {"name": "Ladd McConkey", "team": "Los Angeles Chargers", "position": "WR"},
+            {"name": "Keenan Allen", "team": "Los Angeles Chargers", "position": "WR"},
+            {"name": "Courtland Sutton", "team": "Denver Broncos", "position": "WR"},
+            {"name": "Marvin Mims Jr.", "team": "Denver Broncos", "position": "WR"},
+            {"name": "Jakobi Meyers", "team": "Las Vegas Raiders", "position": "WR"},
+            {"name": "Amari Cooper", "team": "Las Vegas Raiders", "position": "WR"},
+            {"name": "CeeDee Lamb", "team": "Dallas Cowboys", "position": "WR"},
+            {"name": "George Pickens", "team": "Dallas Cowboys", "position": "WR"},
+            {"name": "Malik Nabers", "team": "New York Giants", "position": "WR"},
+            {"name": "Wan'Dale Robinson", "team": "New York Giants", "position": "WR"},
+            {"name": "A.J. Brown", "team": "Philadelphia Eagles", "position": "WR"},
+            {"name": "DeVonta Smith", "team": "Philadelphia Eagles", "position": "WR"},
+            {"name": "Terry McLaurin", "team": "Washington Commanders", "position": "WR"},
+            {"name": "Deebo Samuel Sr.", "team": "Washington Commanders", "position": "WR"},
+            {"name": "Amon-Ra St. Brown", "team": "Detroit Lions", "position": "WR"},
+            {"name": "Jameson Williams", "team": "Detroit Lions", "position": "WR"},
+            {"name": "Matthew Golden", "team": "Green Bay Packers", "position": "WR"},
+            {"name": "Jayden Reed", "team": "Green Bay Packers", "position": "WR"},
+            {"name": "Drake London", "team": "Atlanta Falcons", "position": "WR"},
+            {"name": "Darnell Mooney", "team": "Atlanta Falcons", "position": "WR"},
+            {"name": "Tetairoa McMillan", "team": "Carolina Panthers", "position": "WR"},
+            {"name": "Xavier Legette", "team": "Carolina Panthers", "position": "WR"},
+            {"name": "Chris Olave", "team": "New Orleans Saints", "position": "WR"},
+            {"name": "Rashid Shaheed", "team": "New Orleans Saints", "position": "WR"},
+            {"name": "Mike Evans", "team": "Tampa Bay Buccaneers", "position": "WR"},
+            {"name": "Emeka Egbuka", "team": "Tampa Bay Buccaneers", "position": "WR"},
+            {"name": "Marvin Harrison Jr.", "team": "Arizona Cardinals", "position": "WR"},
+            {"name": "Michael Wilson", "team": "Arizona Cardinals", "position": "WR"},
+            {"name": "Ricky Pearsall", "team": "San Francisco 49ers", "position": "WR"},
+            {"name": "Jauan Jennings", "team": "San Francisco 49ers", "position": "WR"},
+            {"name": "Jaxon Smith-Njigba", "team": "Seattle Seahawks", "position": "WR"},
+            {"name": "Cooper Kupp", "team": "Seattle Seahawks", "position": "WR"},
+            {"name": "Puka Nacua", "team": "Los Angeles Rams", "position": "WR"},
+            {"name": "Davante Adams", "team": "Los Angeles Rams", "position": "WR"},
+            {"name": "Justin Jefferson", "team": "Minnesota Vikings", "position": "WR"},
+            {"name": "Jordan Addison", "team": "Minnesota Vikings", "position": "WR"},
+            {"name": "DJ Moore", "team": "Chicago Bears", "position": "WR"},
+            {"name": "Rome Odunze", "team": "Chicago Bears", "position": "WR"},
+        ]
+
+        # validate unique teams for WRs
+        wr_teams = [w["team"] for w in wide_receivers]
+        dup_wr_teams = set([t for t in wr_teams if wr_teams.count(t) > 1])
+        if dup_wr_teams:
+            self.stdout.write(self.style.ERROR(f"Duplicate teams in wide_receivers list: {', '.join(sorted(dup_wr_teams))}"))
+            return
+
+        if len(wide_receivers) != 32:
+            self.stdout.write(self.style.ERROR(f"Wide receivers list length is {len(wide_receivers)}; expected 32"))
+            return
+
+        Player.objects.bulk_create([Player(**w) for w in wide_receivers], ignore_conflicts=True)
+        self.stdout.write(self.style.SUCCESS("Loaded WRs (32 teams)."))
+
+        # --- NEW: tight ends for all teams ---
+        tight_ends = [
+            {"name": "Jake Ferguson", "team": "Dallas Cowboys", "position": "TE"},
+            {"name": "Luke Schoonmaker", "team": "Dallas Cowboys", "position": "TE"},
+            {"name": "Theo Johnson", "team": "New York Giants", "position": "TE"},
+            {"name": "Daniel Bellinger", "team": "New York Giants", "position": "TE"},
+            {"name": "Dallas Goedert", "team": "Philadelphia Eagles", "position": "TE"},
+            {"name": "Grant Calcaterra", "team": "Philadelphia Eagles", "position": "TE"},
+            {"name": "Zach Ertz", "team": "Washington Commanders", "position": "TE"},
+            {"name": "John Bates", "team": "Washington Commanders", "position": "TE"},
+            {"name": "Sam LaPorta", "team": "Detroit Lions", "position": "TE"},
+            {"name": "Brock Wright", "team": "Detroit Lions", "position": "TE"},
+            {"name": "Tucker Kraft", "team": "Green Bay Packers", "position": "TE"},
+            {"name": "Luke Musgrave", "team": "Green Bay Packers", "position": "TE"},
+            {"name": "Kyle Pitts", "team": "Atlanta Falcons", "position": "TE"},
+            {"name": "Charlie Woerner", "team": "Atlanta Falcons", "position": "TE"},
+            {"name": "Ja'Tavion Sanders", "team": "Carolina Panthers", "position": "TE"},
+            {"name": "Tommy Tremble", "team": "Carolina Panthers", "position": "TE"},
+            {"name": "Juwan Johnson", "team": "New Orleans Saints", "position": "TE"},
+            {"name": "Jack Stoll", "team": "New Orleans Saints", "position": "TE"},
+            {"name": "Cade Otton", "team": "Tampa Bay Buccaneers", "position": "TE"},
+            {"name": "Payne Durham", "team": "Tampa Bay Buccaneers", "position": "TE"},
+            {"name": "Trey McBride", "team": "Arizona Cardinals", "position": "TE"},
+            {"name": "Tip Reiman", "team": "Arizona Cardinals", "position": "TE"},
+            {"name": "Tyler Higbee", "team": "Los Angeles Rams", "position": "TE"},
+            {"name": "Colby Parkinson", "team": "Los Angeles Rams", "position": "TE"},
+            {"name": "Jake Tonges", "team": "San Francisco 49ers", "position": "TE"},
+            {"name": "Luke Farrell", "team": "San Francisco 49ers", "position": "TE"},
+            {"name": "AJ Barner", "team": "Seattle Seahawks", "position": "TE"},
+            {"name": "Elijah Arroyo", "team": "Seattle Seahawks", "position": "TE"},
+            {"name": "T.J. Hockenson", "team": "Minnesota Vikings", "position": "TE"},
+            {"name": "Josh Oliver", "team": "Minnesota Vikings", "position": "TE"},
+            {"name": "Cole Kmet", "team": "Chicago Bears", "position": "TE"},
+            {"name": "Colston Loveland", "team": "Chicago Bears", "position": "TE"},
+            {"name": "Travis Kelce", "team": "Kansas City Chiefs", "position": "TE"},
+            {"name": "Noah Gray", "team": "Kansas City Chiefs", "position": "TE"},
+            {"name": "Will Dissly", "team": "Los Angeles Chargers", "position": "TE"},
+            {"name": "Tyler Conklin", "team": "Los Angeles Chargers", "position": "TE"},
+            {"name": "Adam Trautman", "team": "Denver Broncos", "position": "TE"},
+            {"name": "Evan Engram", "team": "Denver Broncos", "position": "TE"},
+            {"name": "Brock Bowers", "team": "Las Vegas Raiders", "position": "TE"},
+            {"name": "Michael Mayer", "team": "Las Vegas Raiders", "position": "TE"},
+            {"name": "Dalton Kincaid", "team": "Buffalo Bills", "position": "TE"},
+            {"name": "Dawson Knox", "team": "Buffalo Bills", "position": "TE"},
+            {"name": "Darren Waller", "team": "Miami Dolphins", "position": "TE"},
+            {"name": "Julian Hill", "team": "Miami Dolphins", "position": "TE"},
+            {"name": "Hunter Henry", "team": "New England Patriots", "position": "TE"},
+            {"name": "Austin Hooper", "team": "New England Patriots", "position": "TE"},
+            {"name": "Mason Taylor", "team": "New York Jets", "position": "TE"},
+            {"name": "Jeremy Ruckert", "team": "New York Jets", "position": "TE"},
+            {"name": "Mike Gesicki", "team": "Cincinnati Bengals", "position": "TE"},
+            {"name": "Drew Sample", "team": "Cincinnati Bengals", "position": "TE"},
+            {"name": "David Njoku", "team": "Cleveland Browns", "position": "TE"},
+            {"name": "Harold Fannin Jr.", "team": "Cleveland Browns", "position": "TE"},
+            {"name": "Pat Freiermuth", "team": "Pittsburgh Steelers", "position": "TE"},
+            {"name": "Jonnu Smith", "team": "Pittsburgh Steelers", "position": "TE"},
+            {"name": "Mark Andrews", "team": "Baltimore Ravens", "position": "TE"},
+            {"name": "Isaiah Likely", "team": "Baltimore Ravens", "position": "TE"},
+            {"name": "Dalton Schultz", "team": "Houston Texans", "position": "TE"},
+            {"name": "Harrison Bryant", "team": "Houston Texans", "position": "TE"},
+            {"name": "Tyler Warren", "team": "Indianapolis Colts", "position": "TE"},
+            {"name": "Mo Alie-Cox", "team": "Indianapolis Colts", "position": "TE"},
+            {"name": "Brenton Strange", "team": "Jacksonville Jaguars", "position": "TE"},
+            {"name": "Johnny Mundt", "team": "Jacksonville Jaguars", "position": "TE"},
+            {"name": "Chig Okonkwo", "team": "Tennessee Titans", "position": "TE"},
+            {"name": "Gunnar Helm", "team": "Tennessee Titans", "position": "TE"},
+        ]
+
+        Player.objects.bulk_create([Player(**te) for te in tight_ends], ignore_conflicts=True)
+        self.stdout.write(self.style.SUCCESS("Loaded TEs."))
+
+        # --- NEW: kickers for all teams ---
+        kickers = [
+            {"name": "Tyler Bass", "team": "Buffalo Bills", "position": "K"},
+            {"name": "Randy Bullock", "team": "Buffalo Bills", "position": "K"},
+            {"name": "Jason Sanders", "team": "Miami Dolphins", "position": "K"},
+            {"name": "Jake Bailey", "team": "Miami Dolphins", "position": "K"},
+            {"name": "Nick Folk", "team": "New England Patriots", "position": "K"},
+            {"name": "Chad Ryland", "team": "New England Patriots", "position": "K"},
+            {"name": "Andres Borregales", "team": "New York Jets", "position": "K"},
+            {"name": "Greg Zuerlein", "team": "New York Jets", "position": "K"},
+            {"name": "Evan McPherson", "team": "Cincinnati Bengals", "position": "K"},
+            {"name": "Austin McGinnis", "team": "Cincinnati Bengals", "position": "K"},
+            {"name": "Dustin Hopkins", "team": "Cleveland Browns", "position": "K"},
+            {"name": "Lucas Havrisik", "team": "Cleveland Browns", "position": "K"},
+            {"name": "Chris Boswell", "team": "Pittsburgh Steelers", "position": "K"},
+            {"name": "Mark Kaboly", "team": "Pittsburgh Steelers", "position": "K"},
+            {"name": "Tyler Loop", "team": "Baltimore Ravens", "position": "K"},
+            {"name": "Jordan Stout", "team": "Baltimore Ravens", "position": "K"},
+            {"name": "Ka'imi Fairbairn", "team": "Houston Texans", "position": "K"},
+            {"name": "Matt Ammendola", "team": "Houston Texans", "position": "K"},
+            {"name": "Matt Gay", "team": "Indianapolis Colts", "position": "K"},
+            {"name": "Rigoberto Sanchez", "team": "Indianapolis Colts", "position": "K"},
+            {"name": "Cam Little", "team": "Jacksonville Jaguars", "position": "K"},
+            {"name": "Riley Patterson", "team": "Jacksonville Jaguars", "position": "K"},
+            {"name": "Cairo Santos", "team": "Tennessee Titans", "position": "K"},
+            {"name": "Nick Folk", "team": "Tennessee Titans", "position": "K"},
+            {"name": "Harrison Butker", "team": "Kansas City Chiefs", "position": "K"},
+            {"name": "Tommy Townsend", "team": "Kansas City Chiefs", "position": "K"},
+            {"name": "Cameron Dicker", "team": "Los Angeles Chargers", "position": "K"},
+            {"name": "J.T. Bass", "team": "Los Angeles Chargers", "position": "K"},
+            {"name": "Wil Lutz", "team": "Denver Broncos", "position": "K"},
+            {"name": "Trevor Daniel", "team": "Denver Broncos", "position": "K"},
+            {"name": "Daniel Carlson", "team": "Las Vegas Raiders", "position": "K"},
+            {"name": "AJ Cole", "team": "Las Vegas Raiders", "position": "K"},
+            {"name": "Brandon Aubrey", "team": "Dallas Cowboys", "position": "K"},
+            {"name": "Tristan Vizcaino", "team": "Dallas Cowboys", "position": "K"},
+            {"name": "Graham Gano", "team": "New York Giants", "position": "K"},
+            {"name": "Tanner Brown", "team": "New York Giants", "position": "K"},
+            {"name": "Jake Elliott", "team": "Philadelphia Eagles", "position": "K"},
+            {"name": "Jake Elliott", "team": "Philadelphia Eagles", "position": "K"},
+            {"name": "Austin Seibert", "team": "Washington Commanders", "position": "K"},
+            {"name": "Brandon Aubrey", "team": "Washington Commanders", "position": "K"},
+            {"name": "Jake Bates", "team": "Detroit Lions", "position": "K"},
+            {"name": "Michael Badgley", "team": "Detroit Lions", "position": "K"},
+            {"name": "Anders Carlson", "team": "Green Bay Packers", "position": "K"},
+            {"name": "Tim Scott", "team": "Green Bay Packers", "position": "K"},
+            {"name": "Younghoe Koo", "team": "Atlanta Falcons", "position": "K"},
+            {"name": "Blair Walsh", "team": "Atlanta Falcons", "position": "K"},
+            {"name": "Eddy Pineiro", "team": "Carolina Panthers", "position": "K"},
+            {"name": "Harrison Mevis", "team": "Carolina Panthers", "position": "K"},
+            {"name": "Blake Grupe", "team": "New Orleans Saints", "position": "K"},
+            {"name": "Laken Tomlinson", "team": "New Orleans Saints", "position": "K"},
+            {"name": "Chase McLaughlin", "team": "Tampa Bay Buccaneers", "position": "K"},
+            {"name": "Cory Littlejohn", "team": "Tampa Bay Buccaneers", "position": "K"},
+            {"name": "Chad Ryland", "team": "Arizona Cardinals", "position": "K"},
+            {"name": "Matt Prater", "team": "Arizona Cardinals", "position": "K"},
+            {"name": "Jake Moody", "team": "San Francisco 49ers", "position": "K"},
+            {"name": "Mitchell Wishnowsky", "team": "San Francisco 49ers", "position": "K"},
+            {"name": "Jason Myers", "team": "Seattle Seahawks", "position": "K"},
+            {"name": "Michael Dickson", "team": "Seattle Seahawks", "position": "K"},
+            {"name": "Joshua Karty", "team": "Los Angeles Rams", "position": "K"},
+            {"name": "Ethan Evans", "team": "Los Angeles Rams", "position": "K"},
+            {"name": "Will Reichard", "team": "Minnesota Vikings", "position": "K"},
+            {"name": "Ryan Longwell", "team": "Minnesota Vikings", "position": "K"},
+            {"name": "Cairo Santos", "team": "Chicago Bears", "position": "K"},
+            {"name": "Tory Taylor", "team": "Chicago Bears", "position": "K"},
+        ]
+
+        Player.objects.bulk_create([Player(**k) for k in kickers], ignore_conflicts=True)
+        self.stdout.write(self.style.SUCCESS("Loaded Ks."))
+
+        all_entries = players + running_backs + wide_receivers + tight_ends + kickers
+
+        objs = []
+        for entry in all_entries:
+            data = entry.copy()
+            if 'team' in data:
+                data['nfl_team'] = data.pop('team')
+            objs.append(Player(**data))
+
+        Player.objects.bulk_create(objs, ignore_conflicts=True)
+        self.stdout.write(self.style.SUCCESS(f"Loaded {len(objs)} player records."))

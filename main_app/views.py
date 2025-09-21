@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Player, Team, RosterSpot
+from .models import Player, Team, RosterSpot, ROSTER_SLOTS
 from django.http import HttpResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
@@ -11,10 +11,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
 from django.db.models import Q
-from .forms import TeamCreateForm
-from .models import Team, RosterSpot, ROSTER_SLOTS
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from .forms import TeamCreateForm, TeamForm
+import requests
 
 def home(request):
     return render(request, 'home.html')
@@ -28,9 +26,9 @@ def player_index(request):
     return render(request, 'players/index.html', {'players': players})
 
 @login_required
-def player_detail(request, player_id):
-    player = get_object_or_404(Player, id=player_id)
-    return render(request, 'players/detail.html', {'player': player})
+def player_detail(request, pk):
+    player = Player.objects.get(pk=pk)
+    return render(request, 'main_app/player_detail.html', {'player': player})
 
 def signup(request):
     error_message = ''
@@ -122,27 +120,67 @@ def roster_spot_assign(request, team_id, spot_id):
 
 @login_required
 def team_create(request):
-    if request.method == 'POST':
-        form = TeamCreateForm(request.POST)
-        if form.is_valid():
-            team = form.save(commit=False)
-            team.owner = request.user
-            team.save()
-            for slot, _ in ROSTER_SLOTS:
-                player = form.cleaned_data.get(f'player_{slot}')
-                RosterSpot.objects.create(team=team, slot=slot, player=player)
-            return redirect('team-detail', pk=team.pk)
+    q = request.GET.get("q", "").strip()
+    selected_position = request.GET.get("position", "")
+    selected_team = request.GET.get("team", "")
+    sort = request.GET.get("sort", "name")
+
+    players = Player.objects.all()
+    if q:
+        players = players.filter(
+            Q(name__icontains=q) | Q(team__icontains=q) | Q(position__icontains=q)
+        )
+    if selected_position:
+        players = players.filter(position=selected_position)
+    if selected_team:
+        players = players.filter(team=selected_team)
+    if sort == "position":
+        players = players.order_by("position", "name")
+    elif sort == "team":
+        players = players.order_by("team", "name")
     else:
-        form = TeamCreateForm()
+        players = players.order_by("name")
 
-    # build roster_fields only for fields that actually exist on the form
-    roster_fields = []
-    for slot, label in ROSTER_SLOTS:
-        field_name = f'player_{slot}'
-        bound_field = form[field_name] if field_name in form.fields else None
-        roster_fields.append((slot, label, bound_field))
+    positions = sorted(set(Player.objects.values_list("position", flat=True)))
+    teams = sorted(set(Player.objects.values_list("team", flat=True)))
 
-    return render(request, 'main_app/team_form.html', {'form': form, 'roster_fields': roster_fields})
+    roster_slots = [
+        ("QB", "Quarterback"),
+        ("WR1", "Wide Receiver 1"),
+        ("WR2", "Wide Receiver 2"),
+        ("RB1", "Running Back 1"),
+        ("RB2", "Running Back 2"),
+        ("TE", "Tight End"),
+        ("FLEX", "Flex"),
+        ("K", "Kicker"),
+        ("DEF", "Defense"),
+        ("BENCH1", "Bench 1"),
+        ("BENCH2", "Bench 2"),
+        ("BENCH3", "Bench 3"),
+        ("BENCH4", "Bench 4"),
+        ("BENCH5", "Bench 5"),
+        ("BENCH6", "Bench 6"),
+    ]
+
+    if request.method == "POST":
+        form = TeamForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("teams:list")
+    else:
+        form = TeamForm()
+
+    return render(request, "main_app/team_form.html", {
+        "form": form,
+        "players": players,
+        "positions": positions,
+        "teams": teams,
+        "roster_slots": roster_slots,
+        "selected_position": selected_position,
+        "selected_team": selected_team,
+        "sort": sort,
+        "q": q,
+    })
 
 @login_required
 def player_search(request):
@@ -155,3 +193,63 @@ def player_search(request):
             Q(nfl_team__icontains=query)
         )
     return render(request, 'main_app/player_search.html', {'players': players, 'query': query})
+
+RAPIDAPI_KEY = 'YOUR_RAPIDAPI_KEY'
+RAPIDAPI_HOST = 'nfl-api-data.p.rapidapi.com'
+
+def player_search_api(request):
+    query = request.GET.get('q', '')
+    sort = request.GET.get('sort', 'name')
+    position = request.GET.get('position', '')
+    team = request.GET.get('team', '')
+
+    url = 'https://nfl-api-data.p.rapidapi.com/nfl-player-stats/v1/data'
+    headers = {
+        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-host': RAPIDAPI_HOST
+    }
+    resp = requests.get(url, headers=headers)
+    players = resp.json()  # Adjust this if the API structure is different
+
+    # Filter by search query
+    if query:
+        players = [p for p in players if query.lower() in p.get('name', '').lower()]
+
+    # Filter by position
+    if position:
+        players = [p for p in players if p.get('position', '').lower() == position.lower()]
+
+    # Filter by team
+    if team:
+        players = [p for p in players if p.get('team', '').lower() == team.lower()]
+
+    # Sort
+    if sort == 'name':
+        players = sorted(players, key=lambda x: x.get('name', ''))
+    elif sort == 'position':
+        players = sorted(players, key=lambda x: x.get('position', ''))
+    elif sort == 'team':
+        players = sorted(players, key=lambda x: x.get('team', ''))
+
+    # Get unique positions and teams for filter dropdowns
+    positions = sorted(set(p.get('position', '') for p in players if p.get('position')))
+    teams = sorted(set(p.get('team', '') for p in players if p.get('team')))
+
+    unique = set()
+    unique_players = []
+    for p in players:
+        key = (p.name, p.team, p.position)
+        if key not in unique:
+            unique.add(key)
+            unique_players.append(p)
+    players = unique_players
+
+    return render(request, 'main_app/player_search_api.html', {
+        'players': players,
+        'query': query,
+        'sort': sort,
+        'positions': positions,
+        'teams': teams,
+        'selected_position': position,
+        'selected_team': team,
+    })

@@ -15,3 +15,8 @@ class TeamCreateForm(forms.ModelForm):
                 label=label,
                 widget=forms.Select(attrs={'class': 'player-select'})
             )
+
+class TeamForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = "__all__"

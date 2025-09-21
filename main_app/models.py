@@ -22,12 +22,11 @@ ROSTER_SLOTS = [
 
 class Player(models.Model):
     name = models.CharField(max_length=100)
-    position = models.CharField(max_length=10)  # e.g., QB, RB, WR, TE, K, DEF
-    nfl_team = models.CharField(max_length=50, default='Unknown', null=True, blank=True)
-    photo_url = models.URLField(blank=True, null=True)
+    team = models.CharField(max_length=50)
+    position = models.CharField(max_length=20)
 
     def __str__(self):
-        return f"{self.name} ({self.position})"
+        return f"{self.name} - {self.team} ({self.position})"
 
 class Team(models.Model):
     name = models.CharField(max_length=100)
