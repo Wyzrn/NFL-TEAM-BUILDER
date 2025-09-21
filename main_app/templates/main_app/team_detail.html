@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-  <h1>{{ team.name }}</h1>
-  <p>Owner: {{ team.owner.username }}</p>
+  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
+  {% if user.is_authenticated and team.owner == user %}
+    <form method="post" style="margin-bottom: 1em;">
+      {% csrf_token %}
+      <label>
+        Team Name:
+        <input type="text" name="team_name" value="{{ team.name }}" required>
+      </label>
+      <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'team-delete' team.id %}">Delete</a>
+  {% else %}
+    <h1>{{ team.name }}</h1>
+    <p>Owner: {{ team.owner.username }}</p>
+  {% endif %}
   <h2>Roster</h2>
   <ul>
     {% for spot in team.roster_spots.all %}
@@ -9,10 +23,12 @@
         {{ spot.get_slot_display }}:
         {% if spot.player %}
           <img src="{{ spot.player.photo_url|default:'https://via.placeholder.com/40' }}" alt="{{ spot.player.name }}" width="40" style="vertical-align:middle;">
-          {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.nfl_team }})
+          {{ spot.player.name }} ({{ spot.player.position }}, {{ spot.player.team }})
         {% else %}
           <em>Empty</em>
-          <a href="{% url 'roster-assign' team.id spot.id %}">Add Player</a>
+          {% if user.is_authenticated and team.owner == user %}
+            <a href="{% url 'roster-assign' team.id spot.id %}">Add Player</a>
+          {% endif %}
         {% endif %}
       </li>
     {% endfor %}

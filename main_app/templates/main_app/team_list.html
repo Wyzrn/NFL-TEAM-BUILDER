@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
+  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
   <h1>All Fantasy Teams</h1>
   <ul>
     {% for team in object_list %}
       <li>
         <a href="{% url 'team-detail' team.id %}">{{ team.name }}</a>
-        {% if team.owner == user %}
-          | <a href="{% url 'team-update' team.id %}">Edit</a>
+        {% if user.is_authenticated and team.owner == user %}
           | <a href="{% url 'team-delete' team.id %}">Delete</a>
         {% endif %}
       </li>
     {% endfor %}
   </ul>
-  <a href="{% url 'team_create' %}">Create Team</a>
+  {% if user.is_authenticated %}
+    <a href="{% url 'team_create' %}">Create Team</a>
+  {% endif %}
 {% endblock %}

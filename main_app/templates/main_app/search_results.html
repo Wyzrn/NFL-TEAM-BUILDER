@@ -1,12 +1,15 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
+  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
+
   <h1>Search results{% if q %} for "{{ q }}"{% endif %}</h1>
 
   {% if players %}
     <ul>
       {% for p in players %}
         <li>
-          {{ p.name }} — {{ p.team|default:p.nfl_team }} ({{ p.position }})
+          {{ p.name }} ({{ p.position }}, {{ p.nfl_team }})
         </li>
       {% endfor %}
     </ul>

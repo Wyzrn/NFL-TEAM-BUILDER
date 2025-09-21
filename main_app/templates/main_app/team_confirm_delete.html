@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
+  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
   <h1>Delete Team?</h1>
   <hr />
   <h2>Are you sure you want to delete "{{ team.name }}"?</h2>
@@ -8,4 +10,4 @@
     <a href="{% url 'team-detail' team.id %}" class="btn secondary">Cancel</a>
     <button type="submit" class="btn danger">Yes - Delete!</button>
   </form>
-{% endblock %}  
+{% endblock %}

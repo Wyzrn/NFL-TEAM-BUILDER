@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
+  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
   <h1>Add Player to {{ spot.get_slot_display }} ({{ team.name }})</h1>
   <form method="get">
     <input type="text" name="q" value="{{ query }}" placeholder="Search NFL players by name, position, or team" />
@@ -12,7 +14,7 @@
           {% csrf_token %}
           <input type="hidden" name="player_id" value="{{ player.id }}">
           <img src="{{ player.photo_url|default:'https://via.placeholder.com/40' }}" alt="{{ player.name }}" width="40" style="vertical-align:middle;">
-          {{ player.name }} ({{ player.position }}, {{ player.nfl_team }})
+          {{ player.name }} ({{ player.position }}, {{ player.team }})
           <button type="submit">Add</button>
         </form>
       </li>
@@ -20,6 +22,21 @@
       {% if query %}
         <li>No players found.</li>
       {% endif %}
+    {% endfor %}
+  </ul>
+  <hr>
+  <h2>All Players</h2>
+  <ul>
+    {% for player in all_players %}
+      <li>
+        <form method="post" style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="player_id" value="{{ player.id }}">
+          <img src="{{ player.photo_url|default:'https://via.placeholder.com/40' }}" alt="{{ player.name }}" width="40" style="vertical-align:middle;">
+          {{ player.name }} ({{ player.position }}, {{ player.team }})
+          <button type="submit">Add</button>
+        </form>
+      </li>
     {% endfor %}
   </ul>
   <a href="{% url 'team-detail' team.id %}">Back to Team</a>

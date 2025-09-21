@@ -36,9 +36,9 @@ def signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Log the user in after signup
+            login(request, user)
             messages.success(request, 'Welcome to Gridiron Fantasy!')
-            return redirect('player-index')  # Redirect to player list or any page you want
+            return redirect('team-index')  # Redirect to all teams after signup
         else:
             error_message = 'Invalid sign up - try again'
     form = UserCreationForm()
@@ -62,36 +62,36 @@ class PlayerDelete(DeleteView):
     success_url = '/players/'
 
 @method_decorator(login_required, name='dispatch')
-class TeamCreate(CreateView):
-    model = Team
-    fields = ['name']
-    success_url = reverse_lazy('team-index')
-
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        response = super().form_valid(form)
-        # Create empty roster spots
-        for slot in ROSTER_SLOTS:
-            RosterSpot.objects.create(team=self.object, slot=slot)
-        return response
-
-@method_decorator(login_required, name='dispatch')
-class TeamUpdate(UpdateView):
-    model = Team
-    fields = ['name']
-
-@method_decorator(login_required, name='dispatch')
 class TeamDelete(DeleteView):
     model = Team
     success_url = '/teams/'
 
-@method_decorator(login_required, name='dispatch')
+    def get_queryset(self):
+        return Team.objects.filter(owner=self.request.user)
+
 class TeamList(ListView):
     model = Team
+    # Show all teams to all users
+    def get_queryset(self):
+        return Team.objects.all()
 
-@method_decorator(login_required, name='dispatch')
 class TeamDetail(DetailView):
     model = Team
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.user == self.object.owner:
+            new_name = request.POST.get("team_name", "").strip()
+            if new_name:
+                self.object.name = new_name
+                self.object.save()
+                messages.success(request, "Team name updated.")
+            else:
+                messages.error(request, "Team name cannot be empty.")
+        return redirect(self.object.get_absolute_url())
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 @login_required
 def roster_spot_assign(request, team_id, spot_id):
@@ -103,8 +103,9 @@ def roster_spot_assign(request, team_id, spot_id):
         players = Player.objects.filter(
             Q(name__icontains=query) |
             Q(position__icontains=query) |
-            Q(nfl_team__icontains=query)
+            Q(team__icontains=query)
         )
+    all_players = Player.objects.all()
     if request.method == 'POST':
         player_id = request.POST.get('player_id')
         player = get_object_or_404(Player, id=player_id)
@@ -116,6 +117,7 @@ def roster_spot_assign(request, team_id, spot_id):
         'spot': spot,
         'players': players,
         'query': query,
+        'all_players': all_players,
     })
 
 @login_required
@@ -134,12 +136,22 @@ def team_create(request):
         players = players.filter(position=selected_position)
     if selected_team:
         players = players.filter(team=selected_team)
+
+    unique = set()
+    unique_players = []
+    for p in players:
+        key = (p.name, p.team, p.position)
+        if key not in unique:
+            unique.add(key)
+            unique_players.append(p)
+    players = unique_players
+
     if sort == "position":
-        players = players.order_by("position", "name")
+        players = sorted(players, key=lambda p: (p.position, p.name))
     elif sort == "team":
-        players = players.order_by("team", "name")
+        players = sorted(players, key=lambda p: (p.team, p.name))
     else:
-        players = players.order_by("name")
+        players = sorted(players, key=lambda p: p.name)
 
     positions = sorted(set(Player.objects.values_list("position", flat=True)))
     teams = sorted(set(Player.objects.values_list("team", flat=True)))
@@ -163,15 +175,25 @@ def team_create(request):
     ]
 
     if request.method == "POST":
-        form = TeamForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("teams:list")
-    else:
-        form = TeamForm()
+        team_name = request.POST.get("team_name")
+        if team_name:
+            team = Team.objects.create(name=team_name, owner=request.user)
+            # Assign players to roster spots
+            for slot, _ in roster_slots:
+                player_id = request.POST.get(f"slot_{slot}")
+                if player_id:
+                    player = Player.objects.get(id=player_id)
+                    RosterSpot.objects.create(team=team, slot=slot, player=player)
+                else:
+                    RosterSpot.objects.create(team=team, slot=slot)
+            # Redirect to the new team's detail page (this is what you want)
+            return redirect(team.get_absolute_url())
+        else:
+            messages.error(request, "Team name is required.")
 
+    # No form object needed, just pass None
     return render(request, "main_app/team_form.html", {
-        "form": form,
+        "form": None,
         "players": players,
         "positions": positions,
         "teams": teams,
@@ -190,7 +212,7 @@ def player_search(request):
         players = Player.objects.filter(
             Q(name__icontains=query) |
             Q(position__icontains=query) |
-            Q(nfl_team__icontains=query)
+            Q(team__icontains=query)
         )
     return render(request, 'main_app/player_search.html', {'players': players, 'query': query})
 
@@ -238,7 +260,7 @@ def player_search_api(request):
     unique = set()
     unique_players = []
     for p in players:
-        key = (p.name, p.team, p.position)
+        key = (p.get('name'), p.get('team'), p.get('position'))
         if key not in unique:
             unique.add(key)
             unique_players.append(p)

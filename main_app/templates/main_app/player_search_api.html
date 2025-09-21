@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
+  <link rel="stylesheet" href="{% static 'css/team_form.css' %}">
   <h1>Search NFL Players</h1>
   <form method="get">
     <input type="text" name="q" value="{{ query }}" id="player-search" placeholder="Search by name">
@@ -25,7 +27,7 @@
   <ul>
     {% for player in players %}
       <li>
-        {{ player.name }} ({{ player.position }}, {{ player.team }})
+        {{ player.name }} ({{ player.position }}, {{ player.nfl_team }})
       </li>
     {% empty %}
       <li>No players found.</li>

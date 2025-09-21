@@ -22,8 +22,14 @@ ROSTER_SLOTS = [
 
 class Player(models.Model):
     name = models.CharField(max_length=100)
-    team = models.CharField(max_length=50)
-    position = models.CharField(max_length=20)
+    team = models.CharField(max_length=100)
+    position = models.CharField(max_length=10)
+    photo_url = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    age = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('name', 'team', 'position')
 
     def __str__(self):
         return f"{self.name} - {self.team} ({self.position})"

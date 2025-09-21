@@ -1,12 +1,11 @@
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 from main_app.models import Player
 
 class Command(BaseCommand):
-    help = "Load players (QBs, RBs, WRs) with nfl_team field mapped"
+    help = "Load players (QBs, RBs, WRs, TEs, Ks) with team field"
 
     def handle(self, *args, **kwargs):
-        q = ""
+        # QBs
         players = [
             {"name": "Josh Allen", "team": "Buffalo Bills", "position": "QB"},
             {"name": "Tua Tagovailoa", "team": "Miami Dolphins", "position": "QB"},
@@ -41,27 +40,15 @@ class Command(BaseCommand):
             {"name": "J.J. McCarthy", "team": "Minnesota Vikings", "position": "QB"},
             {"name": "Caleb Williams", "team": "Chicago Bears", "position": "QB"},
         ]
-
-        filtered_players = Player.objects.filter(name__icontains="Josh")
-
-        # This is the correct way to filter a Python list:
-        players = [
-            p for p in players
-            if q.lower() in p["name"].lower()
-            or q.lower() in p["team"].lower()
-            or q.lower() in p["position"].lower()
-        ]
-
-        # add QBs (do not modify these)
         Player.objects.bulk_create([Player(**p) for p in players], ignore_conflicts=True)
 
-        # --- NEW: running backs for all 32 teams ---
+        # RBs
         running_backs = [
             {"name": "James Cook", "team": "Buffalo Bills", "position": "RB"},
             {"name": "Devon Achane", "team": "Miami Dolphins", "position": "RB"},
             {"name": "Rhamondre Stevenson", "team": "New England Patriots", "position": "RB"},
             {"name": "Breece Hall", "team": "New York Jets", "position": "RB"},
-            {"name": "Chase", "team": "Cincinnati Bengals", "position": "RB"},
+            {"name": "Chase Brown", "team": "Cincinnati Bengals", "position": "RB"},
             {"name": "Jerome Ford", "team": "Cleveland Browns", "position": "RB"},
             {"name": "Jaylen Warren", "team": "Pittsburgh Steelers", "position": "RB"},
             {"name": "Derrick Henry", "team": "Baltimore Ravens", "position": "RB"},
@@ -90,22 +77,9 @@ class Command(BaseCommand):
             {"name": "Aaron Jones", "team": "Minnesota Vikings", "position": "RB"},
             {"name": "D'Andre Swift", "team": "Chicago Bears", "position": "RB"},
         ]
-
-        # validate unique teams for RBs
-        teams = [r["team"] for r in running_backs]
-        dup_teams = set([t for t in teams if teams.count(t) > 1])
-        if dup_teams:
-            self.stdout.write(self.style.ERROR(f"Duplicate teams in running_backs list: {', '.join(sorted(dup_teams))}"))
-            return
-
-        if len(running_backs) != 32:
-            self.stdout.write(self.style.ERROR(f"Running backs list length is {len(running_backs)}; expected 32"))
-            return
-
         Player.objects.bulk_create([Player(**r) for r in running_backs], ignore_conflicts=True)
-        self.stdout.write(self.style.SUCCESS("Loaded QBs and RBs (RBs: 32 teams)."))
 
-        # --- NEW: wide receivers for all 32 teams ---
+        # WRs
         wide_receivers = [
             {"name": "Khalil Shakir", "team": "Buffalo Bills", "position": "WR"},
             {"name": "Keon Coleman", "team": "Buffalo Bills", "position": "WR"},
@@ -172,22 +146,9 @@ class Command(BaseCommand):
             {"name": "DJ Moore", "team": "Chicago Bears", "position": "WR"},
             {"name": "Rome Odunze", "team": "Chicago Bears", "position": "WR"},
         ]
-
-        # validate unique teams for WRs
-        wr_teams = [w["team"] for w in wide_receivers]
-        dup_wr_teams = set([t for t in wr_teams if wr_teams.count(t) > 1])
-        if dup_wr_teams:
-            self.stdout.write(self.style.ERROR(f"Duplicate teams in wide_receivers list: {', '.join(sorted(dup_wr_teams))}"))
-            return
-
-        if len(wide_receivers) != 32:
-            self.stdout.write(self.style.ERROR(f"Wide receivers list length is {len(wide_receivers)}; expected 32"))
-            return
-
         Player.objects.bulk_create([Player(**w) for w in wide_receivers], ignore_conflicts=True)
-        self.stdout.write(self.style.SUCCESS("Loaded WRs (32 teams)."))
 
-        # --- NEW: tight ends for all teams ---
+        # TEs
         tight_ends = [
             {"name": "Jake Ferguson", "team": "Dallas Cowboys", "position": "TE"},
             {"name": "Luke Schoonmaker", "team": "Dallas Cowboys", "position": "TE"},
@@ -254,11 +215,9 @@ class Command(BaseCommand):
             {"name": "Chig Okonkwo", "team": "Tennessee Titans", "position": "TE"},
             {"name": "Gunnar Helm", "team": "Tennessee Titans", "position": "TE"},
         ]
-
         Player.objects.bulk_create([Player(**te) for te in tight_ends], ignore_conflicts=True)
-        self.stdout.write(self.style.SUCCESS("Loaded TEs."))
 
-        # --- NEW: kickers for all teams ---
+        # Ks
         kickers = [
             {"name": "Tyler Bass", "team": "Buffalo Bills", "position": "K"},
             {"name": "Randy Bullock", "team": "Buffalo Bills", "position": "K"},
@@ -297,7 +256,6 @@ class Command(BaseCommand):
             {"name": "Graham Gano", "team": "New York Giants", "position": "K"},
             {"name": "Tanner Brown", "team": "New York Giants", "position": "K"},
             {"name": "Jake Elliott", "team": "Philadelphia Eagles", "position": "K"},
-            {"name": "Jake Elliott", "team": "Philadelphia Eagles", "position": "K"},
             {"name": "Austin Seibert", "team": "Washington Commanders", "position": "K"},
             {"name": "Brandon Aubrey", "team": "Washington Commanders", "position": "K"},
             {"name": "Jake Bates", "team": "Detroit Lions", "position": "K"},
@@ -325,18 +283,5 @@ class Command(BaseCommand):
             {"name": "Cairo Santos", "team": "Chicago Bears", "position": "K"},
             {"name": "Tory Taylor", "team": "Chicago Bears", "position": "K"},
         ]
-
         Player.objects.bulk_create([Player(**k) for k in kickers], ignore_conflicts=True)
-        self.stdout.write(self.style.SUCCESS("Loaded Ks."))
-
-        all_entries = players + running_backs + wide_receivers + tight_ends + kickers
-
-        objs = []
-        for entry in all_entries:
-            data = entry.copy()
-            if 'team' in data:
-                data['nfl_team'] = data.pop('team')
-            objs.append(Player(**data))
-
-        Player.objects.bulk_create(objs, ignore_conflicts=True)
-        self.stdout.write(self.style.SUCCESS(f"Loaded {len(objs)} player records."))
+        self.stdout.write(self.style.SUCCESS("Loaded QBs, RBs, WRs, TEs, and Ks."))
