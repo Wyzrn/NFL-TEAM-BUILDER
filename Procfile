@@ -1,1 +1,1 @@
-web: gunicorn nfltteambuilder.wsgi
+web: gunicorn nflteambuilder.wsgi
