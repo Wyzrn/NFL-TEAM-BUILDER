@@ -12,7 +12,6 @@ from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
 from django.db.models import Q
 from .forms import TeamCreateForm, TeamForm
-import requests
 
 def home(request):
     return render(request, 'home.html')
