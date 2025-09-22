@@ -252,7 +252,6 @@ nav li {
   }
 
   .header-logo-container {
-    width: 213px;
   }
 
   .page-header h1 {
@@ -306,8 +305,6 @@ nav li {
 
   .header-logo-container {
     padding-top: 6px;
-    width: 256px;
-    height: 35px;
   }
 
   @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
@@ -316,8 +313,7 @@ nav li {
       backdrop-filter: none;
     }
 
-    nav,
-    .header-logo-container {
+    nav {
       background: rgba(34, 139, 34, 0.6);
       -webkit-backdrop-filter: blur(3px);
       backdrop-filter: blur(3px);
