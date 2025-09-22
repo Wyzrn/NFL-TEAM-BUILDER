@@ -89,6 +89,26 @@ class TeamDetail(DetailView):
                 messages.error(request, "Team name cannot be empty.")
         return redirect(self.object.get_absolute_url())
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        team = self.object
+        
+        # Define the proper roster order
+        roster_order = ['QB', 'RB1', 'RB2', 'WR1', 'WR2', 'TE', 'FLEX', 'K', 'DEF', 
+                       'BENCH1', 'BENCH2', 'BENCH3', 'BENCH4', 'BENCH5', 'BENCH6']
+        
+        # Get all roster spots for this team
+        spots_dict = {spot.slot: spot for spot in team.roster_spots.all()}
+        
+        # Order them according to roster_order
+        ordered_roster_spots = []
+        for slot in roster_order:
+            if slot in spots_dict:
+                ordered_roster_spots.append(spots_dict[slot])
+        
+        context['ordered_roster_spots'] = ordered_roster_spots
+        return context
+
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 

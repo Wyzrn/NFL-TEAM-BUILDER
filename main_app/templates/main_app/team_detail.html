@@ -21,7 +21,7 @@
     {% endif %}
     <h2 class="roster-title">Roster</h2>
     <ul class="roster-list">
-      {% for spot in team.roster_spots.all|dictsort:"slot" %}
+      {% for spot in ordered_roster_spots %}
         <li class="roster-list-item">
           <span class="roster-slot-label">{{ spot.get_slot_display }}:</span>
           {% if spot.player %}
