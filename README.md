@@ -17,7 +17,6 @@ NFL Team Builder is a Django web application that allows football fans to create
 - PostgreSQL (default, can be changed in `settings.py`)
 - HTML5, CSS3 (custom styles)
 - JavaScript (optional, for enhancements)
-- [NFL API Data](https://rapidapi.com/) (for player stats, if enabled)
 
 ## Setup Instructions
 
@@ -33,7 +32,7 @@ NFL Team Builder is a Django web application that allows football fans to create
    ```
 
 3. **Configure the database:**
-   - Update `DATABASES` in `catcollector/settings.py` if needed.
+   - Update `DATABASES` in `nflteambuilder/settings.py` if needed.
 
 4. **Apply migrations:**
    ```bash

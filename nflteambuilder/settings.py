@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'catcollector.urls'
+ROOT_URLCONF = 'nflteambuilder.urls'
 
 TEMPLATES = [
     {
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'catcollector.wsgi.application'
+WSGI_APPLICATION = 'nflteambuilder.wsgi.application'
 
 
 # Database
