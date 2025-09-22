@@ -53,7 +53,7 @@ class PlayerCreate(CreateView):
 @method_decorator(login_required, name='dispatch')
 class PlayerUpdate(UpdateView):
     model = Player
-    # Let's disallow the renaming of a player by excluding the name field!
+    # Disallow the renaming of a player by excluding the name field
     fields = ['position', 'description', 'age']
 
 @method_decorator(login_required, name='dispatch')
@@ -225,7 +225,6 @@ def team_create(request):
                 # Find the existing RosterSpot for this team and slot
                 spot = RosterSpot.objects.filter(team=team, slot=slot).first()
                 if not spot:
-                    # If for some reason it doesn't exist, create it (shouldn't happen if you create all spots at team creation)
                     spot = RosterSpot.objects.create(team=team, slot=slot)
                 if player_id:
                     player = Player.objects.get(id=player_id)
@@ -276,7 +275,7 @@ def player_search_api(request):
         'x-rapidapi-host': RAPIDAPI_HOST
     }
     resp = requests.get(url, headers=headers)
-    players = resp.json()  # Adjust this if the API structure is different
+    players = resp.json()  # Adjust this if I need to change the API structure
 
     # Filter by search query
     if query:
