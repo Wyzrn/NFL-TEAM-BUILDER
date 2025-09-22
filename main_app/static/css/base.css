@@ -110,7 +110,7 @@ nav li {
   padding: 5px 8px;
 }
 
-/* .header-logo-container {
+.header-logo-container {
   margin: auto;
   padding: 10px 20px 0;
   max-width: 500px;
@@ -125,7 +125,7 @@ nav li {
   box-shadow: var(--card-box-shadow);
   width: 44px;
   height: 32px;
-} */
+}
 
 .header-logo-img {
   width: 24px;
@@ -240,22 +240,6 @@ nav li {
   }
 
   nav,
-  .header-logo-container {
-    margin: 10px 0;
-    padding: 0 15px;
-  }
-
-  .header-logo-container {
-    width: 44px;
-    height: 32px;
-    padding: 0;
-    max-width: 44px;
-  }
-
-  .header-logo-img {
-    width: 24px;
-    height: 24px;
-  }
 
   nav {
     margin-left: auto;
