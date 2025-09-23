@@ -14,7 +14,7 @@
 .team-list-container {
   max-width: 600px;
   margin: 2rem auto;
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: var(--card-border-radius);
   box-shadow: var(--card-box-shadow);
   padding: 2.5rem 2rem;

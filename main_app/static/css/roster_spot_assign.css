@@ -13,14 +13,19 @@
 
 body {
   font-family: var(--font-main);
-  background: linear-gradient(135deg, var(--accent) 0%, var(--forest-green-light) 100%);
+  background: linear-gradient(rgba(34, 139, 34, 0.1), rgba(76, 175, 80, 0.1)), 
+              url('https://t3.ftcdn.net/jpg/06/44/05/82/360_F_644058207_PrFDybrEo04Xf5KAHecWoiGJ72laUxn1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--forest-green-dark);
 }
 
 .roster-container {
   max-width: 600px;
   margin: 2rem auto;
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: var(--card-border-radius);
   box-shadow: var(--card-box-shadow);
   padding: 2rem;
