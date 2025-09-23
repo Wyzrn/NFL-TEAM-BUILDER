@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 {% block content %}
-  <h2>Login</h2>
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Login</button>
-  </form>
-  {% if form.errors %}
-    <p style="color: red;">Invalid username or password.</p>
-  {% endif %}
+  <div class="auth-container">
+    <h2>Login</h2>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn">Login</button>
+    </form>
+    {% if form.errors %}
+      <p style="color: red;">Invalid username or password.</p>
+    {% endif %}
+  </div>
 {% endblock %}
